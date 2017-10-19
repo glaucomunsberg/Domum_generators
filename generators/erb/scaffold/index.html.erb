@@ -1,0 +1,17 @@
+<%%= app_header%>
+
+	<%%=app_header_page%>
+
+		<%%=list_header @<%= plural_table_name %>, <%= plural_table_name %>_path%>
+
+
+				<%% @<%= plural_table_name %>.each do |<%= singular_table_name %>| %>
+
+					<%%=list_item <%= singular_table_name %>.id, <%= singular_table_name %>.<%=attributes[1].name%>, <%= singular_table_name %>.updated_at, edit_<%= singular_table_name %>_path(<%= singular_table_name %>),"chat",true%>
+
+				<%% end %>
+
+		<%%=list_footer %>
+
+<%%= app_footer%>
+<%%= app_botton_add new_<%= singular_table_name %>_path %>

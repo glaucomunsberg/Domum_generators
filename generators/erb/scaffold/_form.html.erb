@@ -1,0 +1,57 @@
+<%%=app_header_page%>
+
+    <%%= form_for(@<%= singular_table_name %>) do |f| %>
+
+
+        <% attributes.each do |attribute| -%>
+
+        <% case attribute.field_type -%>
+        <% when :password_digest -%>
+          <div class="row" >
+            <div class="col s12 m6 l6">
+              <%%= f.label :password %><br>
+              <%%= f.password_field :password %>
+            </div>
+            <div class="col s12 m6 l6">
+              <%%= f.label :password_confirmation %><br>
+              <%%= f.password_field :password_confirmation %>
+            </div>
+          </div>
+        <% case :string -%>
+
+            <%%=paper_input :<%= attribute.column_name %>, f,"<%= attribute.column_name %>", @<%= singular_table_name %>).<%= attribute.column_name %>%>
+
+        <% case :integer, :float,:decimal -%>
+
+            <%%=paper_input :<%= attribute.column_name %>, f,"<%= attribute.column_name %>", @<%= singular_table_name %>).<%= attribute.column_name %>,"",false,"number"%>
+
+        <% case :boolean -%>
+
+            <%%=paper_checkbox :<%= attribute.column_name %>, f, :<%= attribute.column_name %>, f.object.:<%= attribute.column_name %>, ":<%= attribute.column_name %>","done"%>
+
+        <% case :text -%>
+
+            <%%=paper_editor :<%= attribute.column_name %>, f,"<%= attribute.column_name %>", @<%= singular_table_name %>).<%= attribute.column_name %>,"mode_comment"%>
+
+        <% case :date -%>
+
+            <%%=paper_date_select :<%= attribute.column_name %>,f,f.object.<%= attribute.column_name %>,:<%= attribute.column_name %>,"<%= attribute.column_name %>","today",nil,false%>
+
+        <% case :datetime -%>
+
+        <% case :references -%>
+
+          <%=paper_select :<%= attribute.column_name %>,f,f.object.<%= attribute.column_name %>,"<%= attribute.column_name %>",:<%= attribute.column_name %>,Example::Category.all,"id","description","turned_in"%>
+
+        <% else -%>
+
+            <%%=paper_input :<%= attribute.column_name %>, f,"<%= attribute.column_name %>", @<%= singular_table_name %>).<%= attribute.column_name %>,"" %>
+
+        <% end -%>
+        <% end -%>
+
+        <%=paper_input t("example_category_description"), f,"description",@example_category.description,""%>
+    <%% end %>
+
+<%%=app_footer_page @<%= singular_table_name %>,<%= plural_table_name %>_path%>
+<%%=app_botton_save <%= plural_table_name %>_path %>
