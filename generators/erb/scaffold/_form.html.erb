@@ -1,57 +1,53 @@
 <%%=app_header_page%>
 
-    <%%= form_for(@<%= singular_table_name %>) do |f| %>
+  <%%= form_for(@<%= singular_table_name %>) do |f| %>
 
+    <% attributes.each do |attribute| -%>
+    <% if attribute.password_digest? -%>
+      <div class="row" >
+        <div class="col s12 m6 l6">
+          <%%= f.label :password %><br>
+          <%%= f.password_field :password %>
+        </div>
+        <div class="col s12 m6 l6">
+          <%%= f.label :password_confirmation %><br>
+          <%%= f.password_field :password_confirmation %>
+        </div>
+      </div>
+      <% else -%>
+      <% if [:text, :text_area,"text_area"].include? attribute.field_type -%>
+      <%%=paper_editor :<%= attribute.column_name %>, f,"<%= attribute.column_name %>", @<%= singular_table_name %>.<%= attribute.column_name %>,"mode_comment"%>
 
-        <% attributes.each do |attribute| -%>
+      <% elsif [:integer, :float,:decimal,:number_field].include? attribute.field_type -%>
+      <%%=paper_input :<%= attribute.column_name %>, f,"<%= attribute.column_name %>", @<%= singular_table_name %>.<%= attribute.column_name %>,"",false,"number"%>
 
-        <% case attribute.field_type -%>
-        <% when :password_digest -%>
-          <div class="row" >
-            <div class="col s12 m6 l6">
-              <%%= f.label :password %><br>
-              <%%= f.password_field :password %>
-            </div>
-            <div class="col s12 m6 l6">
-              <%%= f.label :password_confirmation %><br>
-              <%%= f.password_field :password_confirmation %>
-            </div>
-          </div>
-        <% case :string -%>
+      <% elsif [:boolean,:check_box].include? attribute.field_type -%>
+      <%%=paper_checkbox :<%= attribute.column_name %>, f, :<%= attribute.column_name %>, f.object.:<%= attribute.column_name %>, ":<%= attribute.column_name %>","done"%>
 
-            <%%=paper_input :<%= attribute.column_name %>, f,"<%= attribute.column_name %>", @<%= singular_table_name %>).<%= attribute.column_name %>%>
+      <% elsif [:string,:text_field].include? attribute.field_type -%>
+      <% if attribute.default == nil-%>
+      <%%=paper_select :<%= attribute.column_name %>,f,f.object.<%= attribute.column_name %>,"<%= attribute.column_name %>",:<%= attribute.column_name %>,<%= attribute.reference?%>.all,"id","description","turned_in"%> %>
 
-        <% case :integer, :float,:decimal -%>
+      <%else-%>
+      <%%=paper_input :<%= attribute.column_name %>, f,"<%= attribute.column_name %>", @<%= singular_table_name %>.<%= attribute.column_name %>%>
 
-            <%%=paper_input :<%= attribute.column_name %>, f,"<%= attribute.column_name %>", @<%= singular_table_name %>).<%= attribute.column_name %>,"",false,"number"%>
+      <%end%>
+      <% elsif [:date, :date_select].include? attribute.field_type -%>
+      <%%=paper_date_select :<%= attribute.column_name %>,f,f.object.<%= attribute.column_name %>,:<%= attribute.column_name %>,"<%= attribute.column_name %>","today",nil,false%>
 
-        <% case :boolean -%>
+      <% elsif [:datetime].include? attribute.field_type -%>
+      <%%= f.<%= attribute.field_type %> :<%= attribute.column_name %> %>
 
-            <%%=paper_checkbox :<%= attribute.column_name %>, f, :<%= attribute.column_name %>, f.object.:<%= attribute.column_name %>, ":<%= attribute.column_name %>","done"%>
+      <% elsif [:references].include? attribute.field_type -%>
+      <%%=paper_select :<%= attribute.column_name %>,f,f.object.<%= attribute.column_name %>,"<%= attribute.column_name %>",:<%= attribute.column_name %>,<%= attribute.references?[1]%>.all,"id","description","turned_in"%> %>
 
-        <% case :text -%>
+      <% else -%>
+      <%%=f.<%= attribute.field_type %> :<%= attribute.column_name %> %>
 
-            <%%=paper_editor :<%= attribute.column_name %>, f,"<%= attribute.column_name %>", @<%= singular_table_name %>).<%= attribute.column_name %>,"mode_comment"%>
-
-        <% case :date -%>
-
-            <%%=paper_date_select :<%= attribute.column_name %>,f,f.object.<%= attribute.column_name %>,:<%= attribute.column_name %>,"<%= attribute.column_name %>","today",nil,false%>
-
-        <% case :datetime -%>
-
-        <% case :references -%>
-
-          <%=paper_select :<%= attribute.column_name %>,f,f.object.<%= attribute.column_name %>,"<%= attribute.column_name %>",:<%= attribute.column_name %>,Example::Category.all,"id","description","turned_in"%>
-
-        <% else -%>
-
-            <%%=paper_input :<%= attribute.column_name %>, f,"<%= attribute.column_name %>", @<%= singular_table_name %>).<%= attribute.column_name %>,"" %>
-
-        <% end -%>
-        <% end -%>
-
-        <%=paper_input t("example_category_description"), f,"description",@example_category.description,""%>
-    <%% end %>
+      <% end -%>
+      <% end -%>
+      <% end -%>
+  <%% end %>
 
 <%%=app_footer_page @<%= singular_table_name %>,<%= plural_table_name %>_path%>
 <%%=app_botton_save <%= plural_table_name %>_path %>
